@@ -16,7 +16,7 @@ func TestGetIntersection(t *testing.T) {
 		{
 			name:      "пересекаются",
 			slice1:    []int{65, 3, 58, 678, 64},
-			slice2:    []int{64, 2, 3, 43},
+			slice2:    []int{64, 2, 3, 43, 3},
 			wantSlice: []int{64, 3},
 			wantBool:  true,
 		},
