@@ -24,7 +24,10 @@ func main() {
 }
 
 func newOriginalSlice() []int {
-	return rand.Perm(10)
+	sl := rand.Perm(1024)
+	res := make([]int, 10)
+	copy(res, sl)
+	return res
 }
 
 func sliceExample[S ~[]E, E constraints.Integer](slice S) S {
