@@ -1,4 +1,4 @@
-package first
+package main
 
 import (
 	"crypto/sha256"
@@ -19,18 +19,15 @@ func main() {
 	var complex complex128 = 1 + 2i
 	vals := []any{integer8, integer10, integer16, real, str, boolean, complex}
 
-	fmt.Print(currentAssignment(os.Stdout, vals...))
-}
-
-func currentAssignment(w io.Writer, vals ...any) string {
-	getTypes(w, vals...)
+	getTypes(os.Stdout, vals...)
 	oneString := toSingleString(vals...)
-	println(oneString)
+	fmt.Println(oneString)
 	runes := stringToRunes(oneString)
+	fmt.Println(runes)
 	runes = addGo2024(runes)
-	println(string(runes))
+	fmt.Println(runes)
 
-	return hashRunes(runes...)
+	fmt.Println(hashRunes(runes...))
 }
 
 func getTypes(w io.Writer, vals ...any) {
@@ -43,7 +40,7 @@ func toSingleString(vals ...any) string {
 	var resString string
 	for _, val := range vals {
 		stringToAdd := fmt.Sprintf("%v", val)
-		resString += stringToAdd[1:]
+		resString += stringToAdd
 	}
 	fmt.Printf("%s", resString)
 	return resString

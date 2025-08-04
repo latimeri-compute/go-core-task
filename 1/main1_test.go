@@ -1,69 +1,16 @@
-package first
+package main
 
 import (
 	"bytes"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"io"
 	"slices"
 	"testing"
 )
 
-func TestMain(t *testing.T) {
-	tests := []struct {
-		integer8  int
-		integer10 int
-		integer16 int
-		real      float64
-		str       string
-		boolean   bool
-		complex   complex64
-	}{
-		{
-			integer8:  052,
-			integer10: 42,
-			integer16: 0x2A,
-			real:      3.14,
-			str:       "Golang",
-			boolean:   true,
-			complex:   1 + 2i,
-		},
-		{
-			integer8:  053,
-			integer10: 40,
-			integer16: 0x2C,
-			real:      0.16,
-			str:       "evil golang",
-			boolean:   true,
-			complex:   1 + 2i,
-		},
-	}
-
-	for ti, test := range tests {
-		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
-			var input []any = []any{test.integer8, test.integer10, test.integer16, test.real, test.str, test.boolean, test.complex}
-
-			hasher := sha256.New()
-			fmt.Printf("%v", input...)
-			_, err := hasher.Write([]byte(fmt.Sprintf("%v", input...)))
-			if err != nil {
-				t.Fatal(err)
-			}
-			got := currentAssignment(io.Discard, input...)
-			want := hex.EncodeToString(hasher.Sum(nil))
-			if got != want {
-				t.Errorf("got: %v; want: %v", got, want)
-			}
-		})
-	}
-
-}
-
 func TestToSingleString(t *testing.T) {
 	tests := []struct {
 		name string
-		vals any
+		vals []any
 		want string
 	}{
 		{
@@ -74,7 +21,7 @@ func TestToSingleString(t *testing.T) {
 	}
 	for ti, test := range tests {
 		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
-			got := toSingleString(test.vals)
+			got := toSingleString(test.vals...)
 			if got != test.want {
 				t.Errorf("got: %v; want: %v", got, test.want)
 			}
@@ -183,4 +130,30 @@ func TestStringToRunes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestHashRunes(t *testing.T) {
+	tests := []struct {
+		runes []rune
+		want  string
+	}{
+		{
+			runes: []rune{52, 50, 52, 50, 52, 50, 51, 46, 49, 52, 71, 111, 108, 103, 111, 45, 50, 48, 50, 52, 103, 111, 45, 50, 48, 50, 52, 40, 49, 43, 50, 105, 41},
+			want:  "eb2cb5f348ea6438ef0bb0931a41f50c673fa02166464b01efb692fbd93a1621",
+		},
+		{
+			runes: []rune{52, 50, 52, 50, 52, 50, 51, 46, 49, 52, 71, 111, 108, 97, 110, 103, 116, 114, 117, 101, 40, 49, 43, 50, 105, 41},
+			want:  "2b3a78203af83942344fca645453cc2d4e7c1daa6aaa51114cb43bce89144e6b",
+		},
+	}
+
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
+			got := hashRunes(test.runes...)
+			if got != test.want {
+				t.Errorf("got: %v; want: %v", got, test.want)
+			}
+		})
+	}
+
 }
