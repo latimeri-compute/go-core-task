@@ -24,8 +24,9 @@ func main() {
 
 func currentAssignment(w io.Writer, vals ...any) string {
 	getTypes(w, vals...)
-	runes := []rune(toSingleString(vals...))
-	println(string(runes))
+	oneString := toSingleString(vals...)
+	println(oneString)
+	runes := stringToRunes(oneString)
 	runes = addGo2024(runes)
 	println(string(runes))
 
@@ -54,6 +55,14 @@ func addGo2024(vals []rune) []rune {
 	res := append(append(vals[:length/2], toAdd...), vals[length/2:]...)
 
 	return res
+}
+
+func stringToRunes(strings ...string) []rune {
+	var runes []rune
+	for _, s := range strings {
+		runes = append(runes, []rune(s)...)
+	}
+	return runes
 }
 
 func hashRunes(runes ...rune) string {

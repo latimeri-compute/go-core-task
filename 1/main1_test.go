@@ -12,17 +12,15 @@ import (
 
 func TestMain(t *testing.T) {
 	tests := []struct {
-		name      string
-		integer8  int8
-		integer10 int64
-		integer16 int16
+		integer8  int
+		integer10 int
+		integer16 int
 		real      float64
 		str       string
 		boolean   bool
 		complex   complex64
 	}{
 		{
-			name:      "001",
 			integer8:  052,
 			integer10: 42,
 			integer16: 0x2A,
@@ -32,7 +30,6 @@ func TestMain(t *testing.T) {
 			complex:   1 + 2i,
 		},
 		{
-			name:      "002",
 			integer8:  053,
 			integer10: 40,
 			integer16: 0x2C,
@@ -43,8 +40,8 @@ func TestMain(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
 			var input []any = []any{test.integer8, test.integer10, test.integer16, test.real, test.str, test.boolean, test.complex}
 
 			hasher := sha256.New()
@@ -75,8 +72,8 @@ func TestToSingleString(t *testing.T) {
 			want: "4242423.14Golangtrue(1+2i)",
 		},
 	}
-	for i, test := range tests {
-		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
 			got := toSingleString(test.vals)
 			if got != test.want {
 				t.Errorf("got: %v; want: %v", got, test.want)
@@ -99,8 +96,8 @@ func TestAddGo2024(t *testing.T) {
 			want: []rune("hgo-2024mm"),
 		},
 	}
-	for i, test := range tests {
-		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
 			got := addGo2024(test.vals)
 			res := slices.Compare(got, test.want)
 			if res != 0 {
@@ -116,16 +113,16 @@ func TestGetTypes(t *testing.T) {
 		want string
 	}{
 		{
-			val:  int8(053),
-			want: "значение 053 принадлежит к типу int8\n",
+			val:  int(053),
+			want: "значение 43 принадлежит к типу int\n",
 		},
 		{
-			val:  int64(40),
-			want: "значение 40 принадлежит к типу int64\n",
+			val:  int(40),
+			want: "значение 40 принадлежит к типу int\n",
 		},
 		{
-			val:  int16(0x2C),
-			want: "значение 0x2C принадлежит к типу int16\n",
+			val:  int(0x2C),
+			want: "значение 44 принадлежит к типу int\n",
 		},
 		{
 			val:  0.16,
@@ -145,8 +142,8 @@ func TestGetTypes(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		t.Run(fmt.Sprint(i), func(t *testing.T) {
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
 			buffer := bytes.Buffer{}
 			getTypes(&buffer, test.val)
 			got := buffer.String()
@@ -156,4 +153,34 @@ func TestGetTypes(t *testing.T) {
 		})
 	}
 
+}
+
+func TestStringToRunes(t *testing.T) {
+	tests := []struct {
+		in   string
+		want []rune
+	}{
+		{
+			in:   "string",
+			want: []rune{115, 116, 114, 105, 110, 103},
+		},
+		{
+			in:   "",
+			want: []rune{},
+		},
+		{
+			in:   "go go go",
+			want: []rune{103, 111, 32, 103, 111, 32, 103, 111},
+		},
+	}
+
+	for ti, test := range tests {
+		t.Run(fmt.Sprintf("%02d", ti), func(t *testing.T) {
+			got := stringToRunes(test.in)
+
+			if !slices.Equal(got, test.want) {
+				t.Errorf("got: %v; want: %v", got, test.want)
+			}
+		})
+	}
 }
